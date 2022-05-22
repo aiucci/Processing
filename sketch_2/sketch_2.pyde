@@ -114,7 +114,7 @@ def play_game():
     else:
         if grid[currentX][currentY] == endIndicator: # Execute this once at the conclusion of the game
             grid[previousX][previousY] = 1
-            moveCounter += 1
+            #moveCounter += 1
             grid[startX][startY] = startIndicator # Restore the starting location
             grid[currentX][currentY] = -3
             DebugPrint("[" + str(moveCounter).zfill(4) + "] " + directionGenerated.upper() + " (" + str(currentX) + "," + str(currentY) + ")")
