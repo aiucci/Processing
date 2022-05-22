@@ -1,51 +1,71 @@
 # Based on: https://www.youtube.com/watch?v=nsLTQj-l_18
 # Game Board with 2D Array / Processing + Python
 
-DEBUG = True
+# Define game variables
+countU = 0                    # Count results of random direction Up
+countD = 0                    # Count results of random direction Down
+countL = 0                    # Count results of random direction Left
+countR = 0                    # Count results of random direction Right
+currentIndicator = -3         # The value used to mark the location of a grid location that has been visited
+DEBUG = True                  # Set to true to enable DebugPrint statements
+endIndicator = -2             # The value used to mark the ending location
+intRange = 120                 # The number of rows and columns. CHANGE THIS VALUE TO ALTER THE GAME SIZE
+intSize = 800                 # The size of the play area
+lowerLimit = 0                # The lower limit (Always Zero)
+moveCounter = 1               # The number of moves played
+startIndicator = -1           # The value used to mark the starting location
+upperLimit = intRange - 1     # The upper limit (Always one less than the range (which is zero based)
+w = intSize / (10 + intRange) # Define the number of pixels for each grid
+
+# Create Grid and assign the value 1 to all elements
+grid = [ [1]*intRange for n in range(intRange)]
+
+# Generate and assign random starting and ending coordinates
+startX=int(random(intRange))
+startY=int(random(intRange))
+grid[startX][startY] = startIndicator
+endX=int(random(intRange))
+endY=int(random(intRange))
+grid[endX][endY] = endIndicator
+
+# Initialize current and previous coordinates
+currentX = startX
+currentY = startY
+previousX=0
+previousY=0
+
+# Define the size of the window
+def setup():
+    size(intSize,intSize)
 
 def DebugPrint(message):
     if DEBUG:
         print(message)
 
 def gen_random_direction():
-  direction = "" # Up(U), Down(D), Left(L), Right(R)
-  randomNumber = int(random(0,4))
-  if randomNumber == 0:
-    direction = "U"
-  elif randomNumber == 1:
-    direction = "D"
-  elif randomNumber == 2:
-    direction = "L"
-  elif randomNumber == 3:
-    direction = "R"
-  #DebugPrint("Random Number: " + str(randomNumber) + " : Direction: " + direction)
-  delay(100)
-  return direction
-
-# Create Grid and assign the value 1 to all elements
-grid = [ [1]*8 for n in range(8)]
-
-# Generate and assign random starting and ending coordinates
-startX=int(random(8))
-startY=int(random(8))
-endX=int(random(8))
-endY=int(random(8))
-grid[startX][startY] = -1
-grid[endX][endY] = -2
-
-# Define variables
-upperLimit = 7
-lowerLimit = 0
-moveCounter = 1
-currentX = startX
-currentY = startY
-previousX=0
-previousY=0
-w = 70 # Define the number of pixels for each grid
-
-# Define the size of the window
-def setup():
-    size(800,600)
+    global countU
+    global countD
+    global countL
+    global countR
+    direction = "" # Up(U), Down(D), Left(L), Right(R)
+    
+    randomNumber = int(random(0,4))
+    
+    if randomNumber == 0:
+        direction = "U"
+        countU += 1
+    elif randomNumber == 1:
+        direction = "D"
+        countD += 1
+    elif randomNumber == 2:
+        direction = "L"
+        countL += 1
+    elif randomNumber == 3:
+        direction = "R"
+        countR += 1
+    #DebugPrint("Random Number: " + str(randomNumber) + " : Direction: " + direction)
+    #delay(100)
+    return direction
 
 def draw():
     global currentX
@@ -65,7 +85,7 @@ def draw():
             elif col == -2:
                 fill(255,0,0) # Red: Stop Coordinates
             elif col == -3:
-                    fill(0,0,255) # Blue: Current Coordinates
+                fill(0,0,255) # Blue: Current Coordinates
             else:
                 fill(255)
             rect(x,y,w,w) # Parameters: first two are upper left corner, width, height
@@ -98,27 +118,31 @@ def draw():
         else:
             currentX -= 1
 
-    if moveCounter == 1:
+    if moveCounter == 1: # Execute this if statement once at the begining of the game
         DebugPrint("Move|Direction|Current Coordinates")
         DebugPrint("[" + str(moveCounter).zfill(4) + "] " + directionGenerated.upper() + " (" + str(currentX) + "," + str(currentY) + ")")
-        grid[currentX][currentY] = -3
+        grid[currentX][currentY] = currentIndicator
         moveCounter += 1
         previousX = currentX
         previousY = currentY
     else:
-        if grid[currentX][currentY] == -2:
-            grid[currentX][currentY] = -3
+        if grid[currentX][currentY] == endIndicator: # Execute this once at the conclusion of the game
+            grid[previousX][previousY] = 1
+            #grid[endX][endY] = currentIndicator
             moveCounter += 1
+            grid[startX][startY] = startIndicator # Restore the starting location
             DebugPrint("[" + str(moveCounter).zfill(4) + "] " + directionGenerated.upper() + " (" + str(currentX) + "," + str(currentY) + ")")
+            print("\nThe game is over. Moves required: " + str(moveCounter))
             print("The starting coordinates are: (" + str(startX) + "," + str(startY) + ")" )
             print("The ending coordinates are: (" + str(endX) + "," + str(endY) + ")" )
             print("The current coordinates are: (" + str(currentX) + "," + str(currentY) + ")" )
-            print("The game is over. Moves required: " + str(moveCounter))
-            delay(5000)
+            DebugPrint("Results of RandomDirectionGenerator (U,D,L,R): " + str(countU) + "," + str(countD) + "," + str(countL) + "," + str(countR) + ")")
+            delay(10000)
             exit()
-        else:
+        else: # Execute this else statement for all moves except for the first and last
             grid[previousX][previousY] = 1
-            grid[currentX][currentY] = -3
+            grid[currentX][currentY] = currentIndicator
+            grid[startX][startY] = startIndicator # Restore the starting location
             DebugPrint("[" + str(moveCounter).zfill(4) + "] " + directionGenerated.upper() + " (" + str(currentX) + "," + str(currentY) + ")")
             moveCounter += 1
             previousX = currentX
