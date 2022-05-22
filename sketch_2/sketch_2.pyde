@@ -1,7 +1,11 @@
+# Aidan's Project with graphics
 # Based on: https://www.youtube.com/watch?v=nsLTQj-l_18
 # Game Board with 2D Array / Processing + Python
 
 # Define game variables
+intRange = 10                 # The number of rows and columns. CHANGE THIS VALUE TO ALTER THE GAME SIZE
+
+Continue = True
 countU = 0                    # Count results of random direction Up
 countD = 0                    # Count results of random direction Down
 countL = 0                    # Count results of random direction Left
@@ -9,7 +13,6 @@ countR = 0                    # Count results of random direction Right
 currentIndicator = -3         # The value used to mark the location of a grid location that has been visited
 DEBUG = True                  # Set to true to enable DebugPrint statements
 endIndicator = -2             # The value used to mark the ending location
-intRange = 120                 # The number of rows and columns. CHANGE THIS VALUE TO ALTER THE GAME SIZE
 intSize = 800                 # The size of the play area
 lowerLimit = 0                # The lower limit (Always Zero)
 moveCounter = 1               # The number of moves played
@@ -67,33 +70,16 @@ def gen_random_direction():
     #delay(100)
     return direction
 
-def draw():
+def play_game():
+    global Continue
     global currentX
     global currentY
+    global grid
     global moveCounter
     global previousX
     global previousY
-    
-    # Define variables used for determining the top-left corner of each cell
-    x,y = 0,0 
- 
-    # Display the grid
-    for row in grid:
-        for col in row:
-            if col == -1:
-                fill(0,255,0) # Green: Start Coordinates
-            elif col == -2:
-                fill(255,0,0) # Red: Stop Coordinates
-            elif col == -3:
-                fill(0,0,255) # Blue: Current Coordinates
-            else:
-                fill(255)
-            rect(x,y,w,w) # Parameters: first two are upper left corner, width, height
-            x += w # Increment the value of x by the width of the cell
-        y += w # Increment the value of y by the width of the cell
-        x = 0 # Reset the value of x after drawing each row
 
-    # Generate a random direction to move. Valid directions: Up(U), Down(D), Left(L), Right(R)
+    #Generate a random direction to move. Valid directions: Up(U), Down(D), Left(L), Right(R)
     directionGenerated = gen_random_direction()
     
     # Apply random direction to current coordinates
@@ -128,17 +114,17 @@ def draw():
     else:
         if grid[currentX][currentY] == endIndicator: # Execute this once at the conclusion of the game
             grid[previousX][previousY] = 1
-            #grid[endX][endY] = currentIndicator
             moveCounter += 1
             grid[startX][startY] = startIndicator # Restore the starting location
+            grid[currentX][currentY] = -3
             DebugPrint("[" + str(moveCounter).zfill(4) + "] " + directionGenerated.upper() + " (" + str(currentX) + "," + str(currentY) + ")")
             print("\nThe game is over. Moves required: " + str(moveCounter))
             print("The starting coordinates are: (" + str(startX) + "," + str(startY) + ")" )
             print("The ending coordinates are: (" + str(endX) + "," + str(endY) + ")" )
             print("The current coordinates are: (" + str(currentX) + "," + str(currentY) + ")" )
             DebugPrint("Results of RandomDirectionGenerator (U,D,L,R): " + str(countU) + "," + str(countD) + "," + str(countL) + "," + str(countR) + ")")
-            delay(10000)
-            exit()
+            Continue = False
+            return Continue
         else: # Execute this else statement for all moves except for the first and last
             grid[previousX][previousY] = 1
             grid[currentX][currentY] = currentIndicator
@@ -147,3 +133,30 @@ def draw():
             moveCounter += 1
             previousX = currentX
             previousY = currentY
+
+def draw():
+    # Define variables used for determining the top-left corner of each cell
+    x,y = 0,0
+    ContinuePlaying = play_game()
+            
+    # Display the grid
+    for row in grid: 
+        for col in row:
+            if col == -1:
+                fill(0,255,0) # Green: Start Coordinates
+            elif col == -2:
+                fill(255,0,0) # Red: Stop Coordinates
+            elif col == -3:
+                fill(0,0,255) # Blue: Current Coordinates
+            else:
+                fill(255)
+            rect(x,y,w,w) # Parameters: first two are upper left corner, width, height
+            x += w # Increment the value of x by the width of the cell
+        y += w # Increment the value of y by the width of the cell
+        x = 0 # Reset the value of x after drawing each row
+    
+    if ContinuePlaying == False:
+        noLoop()    
+    
+        
+   
