@@ -1,5 +1,5 @@
 # Based on: https://www.youtube.com/watch?v=nsLTQj-l_18
-# Game Board with 2D Array / Processing + Python
+# Game Board with 2D Array / Processing + Python (Win11)
 
 DEBUG = True
 
