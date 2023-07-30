@@ -2,8 +2,8 @@
 # Game Board with 2D Array / Processing + Python
 
 # Initialize global variables
-DEBUG = True                                         # Set to True to print debug messages
-MoveCounter = 1                                       # Counts the number of valid moves
+DEBUG = True                                          # Set to True to print debug messages
+MoveCounter = 1                                       # Counts the number of valid moves. Start at 1.
 UpperRange = 12                                       # The size of grid is 8 x 8, but is surrounded by a guard zone of two cells on each side (which makes the grid 12x12
 w = 50                                                # Define the number of pixels for each grid
 grid = [[-1]*UpperRange for n in range(UpperRange)]   # Create Grid and assign the value -1 to all elements
